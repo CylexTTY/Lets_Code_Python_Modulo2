@@ -1,17 +1,15 @@
 import random
 
+
 def merge(lista, ini, fim):
     if fim - ini > 1:
         meio = (ini + fim) // 2
-
         # Esquerda
         merge(lista, ini, meio)
-
         # Direita
         merge(lista, meio, fim)
-
         # Ordenar
-        sort(lista, ini, meio, fim)
+        lista = sort(lista, ini, meio, fim)
     return lista
 
 
@@ -31,16 +29,15 @@ def sort(lista, ini, meio, fim):
         elif ponteiro_direito >= len(lista_direita):
             lista[i] = lista_esquerda[ponteiro_esquerdo]
             ponteiro_esquerdo += 1
-        # Se o ponteiro esquerdo for maior ou igual ao ponteiro direito da lista principal,
-        # realocar o elemento do ponteiro direito na próxima posição da lista principal e então o ponteiro direito avança.
+        # Se o elemento do ponteiro esquerdo for maior ou igual ao do ponteiro direito
         elif lista_esquerda[ponteiro_esquerdo] >= lista_direita[ponteiro_direito]:
             lista[i] = lista_direita[ponteiro_direito]
             ponteiro_direito += 1
-        # Se o ponteiro direito for maior ou igual ao ponteiro esquerdo da lista principal,
-        # realocar o elemento do ponteiro esquerdo na próxima posição da lista principal e então o ponteiro esquerdo avança.
+        # Se o elemento do ponteiro direito for maior ou igual ao do ponteiro esquerdo
         else:
             lista[i] = lista_esquerda[ponteiro_esquerdo]
             ponteiro_esquerdo += 1
+    return lista
 
 
 lista = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
