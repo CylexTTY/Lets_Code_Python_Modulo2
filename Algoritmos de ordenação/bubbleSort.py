@@ -3,9 +3,9 @@ import random
 
 def bubbleSort(lista):
     for i in range(len(lista) - 1):
-        for j in range(1, len(lista) - i):
-            if lista[j - 1] > lista[j]:
-                lista[j - 1], lista[j] = lista[j], lista[j - 1]
+        for j in range(len(lista) - i -1):
+            if lista[j] > lista[j+1]:
+                lista[j], lista[j+1] = lista[j+1], lista[j]
     return lista
 
 
