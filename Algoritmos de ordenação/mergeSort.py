@@ -32,12 +32,12 @@ def sort(lista, ini, meio, fim):
             lista[i] = lista_esquerda[ponteiro_esquerdo]
             ponteiro_esquerdo += 1
         # Se o ponteiro esquerdo for maior ou igual ao ponteiro direito da lista principal,
-        # colocar o elemento do ponteiro direito na próxima posição e ponteiro direito avança.
+        # realocar o elemento do ponteiro direito na próxima posição da lista principal e então o ponteiro direito avança.
         elif lista_esquerda[ponteiro_esquerdo] >= lista_direita[ponteiro_direito]:
             lista[i] = lista_direita[ponteiro_direito]
             ponteiro_direito += 1
         # Se o ponteiro direito for maior ou igual ao ponteiro esquerdo da lista principal,
-        # colocar o elemento do ponteiro esquerdo na próxima posição e ponteiro esquerdo avança.
+        # realocar o elemento do ponteiro esquerdo na próxima posição da lista principal e então o ponteiro esquerdo avança.
         else:
             lista[i] = lista_esquerda[ponteiro_esquerdo]
             ponteiro_esquerdo += 1
