@@ -9,13 +9,19 @@ def bubbleSort(lista, reverse=False):
     :param reverse: False (se ordem crescente) / True (se ordem decrescente)
     :return: lista ordenada
     """
-    for i in range(len(lista) - 1):
+    ordered = False
+    i = 0
+    while not ordered:
+        ordered = True
         for j in range(len(lista) - i - 1):
             if not reverse:
                 if lista[j] > lista[j + 1]:
                     lista[j], lista[j + 1] = lista[j + 1], lista[j]
+                    ordered = False
             elif lista[j] < lista[j + 1]:
                 lista[j], lista[j + 1] = lista[j + 1], lista[j]
+                ordered = False
+        i += 1
     return lista
 
 
