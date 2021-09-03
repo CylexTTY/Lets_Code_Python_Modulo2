@@ -9,10 +9,7 @@ def merge(lista):
     return lista
 
 
-def sort(lista, lista_e, lista_d):
-    lista_esquerda = lista_e
-    lista_direita = lista_d
-
+def sort(lista, lista_esquerda, lista_direita):
     ponteiro_esquerdo = ponteiro_direito = 0
 
     for i in range(len(lista_esquerda) + len(lista_direita)):
