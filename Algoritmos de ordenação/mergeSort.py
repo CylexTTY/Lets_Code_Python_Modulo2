@@ -1,26 +1,21 @@
 import random
 
 
-def merge(lista, ini, fim):
-    if fim - ini > 1:
-        meio = (ini + fim) // 2
-        # Esquerda
-        merge(lista, ini, meio)
-        # Direita
-        merge(lista, meio, fim)
-        # Ordenar
-        lista = sort(lista, ini, meio, fim)
+def merge(lista):
+    if len(lista) > 1:
+        meio = len(lista) // 2
+        #            Lista         Esquerda    |        Direita
+        lista = sort(lista, merge(lista[:meio]), merge(lista[meio:]))
     return lista
 
 
-def sort(lista, ini, meio, fim):
-    lista_esquerda = lista[ini:meio]
-    lista_direita = lista[meio:fim]
+def sort(lista, lista_e, lista_d):
+    lista_esquerda = lista_e
+    lista_direita = lista_d
 
-    ponteiro_esquerdo = 0
-    ponteiro_direito = 0
+    ponteiro_esquerdo = ponteiro_direito = 0
 
-    for i in range(ini, fim):
+    for i in range(len(lista_esquerda) + len(lista_direita)):
         # Se o ponteiro esquerdo estourar
         if ponteiro_esquerdo >= len(lista_esquerda):
             lista[i] = lista_direita[ponteiro_direito]
@@ -43,4 +38,4 @@ def sort(lista, ini, meio, fim):
 lista = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 random.shuffle(lista)
 print('Shuffle list:', lista)
-print('Ordered list:', merge(lista, ini=0, fim=len(lista)))
+print('Ordered list:', merge(lista))
