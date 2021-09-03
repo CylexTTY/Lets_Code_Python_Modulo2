@@ -6,19 +6,21 @@ def buscaBinaria(lista: list, el: float or int):
     :param el: Elemento da busca
     :return: True se existe / False se não existe
     """
-    if len(lista) == 1:
-        return lista[0] == el
+    if lista:
+        if len(lista) == 1:
+            return lista[0] == el
 
-    meio = len(lista) // 2
+        meio = len(lista) // 2
 
-    if lista[meio] == el:
-        return True
-    elif lista[meio] > el:
-        return buscaBinaria(lista[:meio], el)
-    else:
-        return buscaBinaria(lista[meio:], el)
-
+        if lista[meio] == el:
+            return True
+        elif lista[meio] > el:
+            return buscaBinaria(lista[:meio], el)
+        else:
+            return buscaBinaria(lista[meio+1:], el)
+    return False
 
 lista = [1, 2, 3, 4, 5]
 print(buscaBinaria(lista, 2))
 print(buscaBinaria(lista, 6))
+print(buscaBinaria([], 0))
