@@ -21,20 +21,18 @@ class GrafoInsta(object):
             print('\033[31mUsuario não existe!\033[m')
         return existe
 
-    def connect_user(self, username_usuario: str, username_amigo: str,
-                     tipo_amizade: int):
+    def connect_user(self, username_usuario: str, username_amigo: str, tipo_amizade: int):
         """
         Conecta usuarios no grafo
-        :param username_usuario: Username do usuario
+        :param username_usuario: Username do usuário
         :param username_amigo: Username do amigo
         :param tipo_amizade: 1 se amigo, 2 se melhor amigo
         """
-        if self.usuario_existe(username_usuario) and self.usuario_existe(
-                username_amigo):
+        if self.usuario_existe(username_usuario) and self.usuario_existe(username_amigo):
             self.rede_instagram[username_usuario][username_amigo] = tipo_amizade
 
     # 1- Exibir número de seguidores
-    def exibir_numero_seguidores(self, username_usuario: str) -> str:
+    def exibir_numero_seguidores(self, username_usuario: str, show=True) -> str:
         if self.usuario_existe(username_usuario):
             qnt_seguidores = 0
             for username, seguindo in self.rede_instagram.items():
@@ -45,14 +43,14 @@ class GrafoInsta(object):
                         # usuários, então contabiliza 1 na lista de seguidores.
                         if nick == username_usuario:
                             qnt_seguidores += 1
-            return f'@{username_usuario} é seguido por {qnt_seguidores} ' \
-                   f'pessoas.'
+            if show:
+                return f'@{username_usuario} é seguido por {qnt_seguidores} pessoas.'
+            return qnt_seguidores
 
     # 2- Exibir quantidades de pessoas que o usuário segue
     def exibir_numero_seguindo(self, username_usuario: str) -> str:
         if self.usuario_existe(username_usuario):
-            return f'@{username_usuario} segue ' \
-                   f'{len(self.rede_instagram[username_usuario])} amigos.'
+            return f'@{username_usuario} segue {len(self.rede_instagram[username_usuario])} amigos.'
 
     # 3- Ordenar a lista de Stories, ou seja, melhores amigos primeiro e depois
     # conexões comuns ordenadas por ordem alfabética ->
@@ -66,12 +64,9 @@ class GrafoInsta(object):
                     melhores_amigos.append(amigo_tipo[0])
                 else:
                     amigos_comuns.append(amigo_tipo[0])
-        return f'@{username_usuario} - Amizades:\n' \
-               f'Melhores a' \
-               f'migos: ' \
-               f'{"@" + " | @".join(self.ordenar_lista(melhores_amigos))}\n' \
-               f'Amigos comuns: ' \
-               f'{"@" + " | @".join(self.ordenar_lista(amigos_comuns))}'
+            return f'@{username_usuario} - Amizades:\n' \
+                   f'Melhores amigos: {"@" + " | @".join(self.ordenar_lista(melhores_amigos))}\n' \
+                   f'Amigos comuns: {"@" + " | @".join(self.ordenar_lista(amigos_comuns))}'
 
     def ordenar_lista(self, lista: list) -> list:
         # Ordenado uma lista de strings de forma alfabética e crescente
@@ -114,34 +109,35 @@ class GrafoInsta(object):
         # Desafio: encontrar maiores vertices adjacentes a esse usuário.
         if k > 0:
             k = min(len(self.rede_instagram.keys()), k)
-            pessoas_seguidores = {pessoa: self.exibir_numero_seguidores(pessoa)
+            # Coletando o número de seguidores de cada usuário
+            pessoas_seguidores = {pessoa: self.exibir_numero_seguidores(pessoa, show=False)
                                   for pessoa in self.rede_instagram.keys()}
-            top_influencers = ''.join(f'{i+1}º ' + f'{"@" + user_name}\n'
-                                      for i, user_name in enumerate(self.ordenar_dicionario_reverse(pessoas_seguidores)[:k]))
-            return f'Top {k} influencers:\n{top_influencers}'
+            # Fazendo um slice da lista ordenada decrescente dos top influencers
+            top_k_influencers = self.ordenar_dicionario_reverse(pessoas_seguidores)[:k]
+            # Organizando visualmente os top influencers como string
+            top_influencers = ''.join(f'\n{i+1}º ' + f'{"@" + user_name}'
+                                      for i, user_name in enumerate(top_k_influencers))
+            return f'Top {k} influencers:{top_influencers}'
 
         return f'\033[31mNúmero {k} inválido\n' \
                f'Necessário numero de 1 a {len(self.rede_instagram)}\033[m'
 
     def ordenar_dicionario_reverse(self, dicionario: dict) -> list:
-        # Considerando que a lista será retornada na ordem decrescente sempre
-        def bubbleSort(dicionario):
-            ordered = False
-            i = 0
-            dicionario = list(tuple(dicionario.items()))
-            while not ordered:
-                ordered = True
-                for j in range(len(dicionario) - i - 1):
-                    # Comparando o menor valor e colocando na frente (final
-                    # da lista)
-                    if dicionario[j][1] < dicionario[j + 1][1]:
-                        dicionario[j], dicionario[j + 1] = dicionario[j + 1], \
-                                                           dicionario[j]
-                        ordered = False
-                i += 1
-            return list(dict(dicionario).keys())
+        # Considerando que a lista será retornada na ordem decrescente sempre, usando o bubble sort
+        ordered = False
+        i = 0
+        nomes_qntSeguidores = list(tuple(dicionario.items()))
 
-        return bubbleSort(dicionario)
+        while not ordered:
+            ordered = True
+            for j in range(len(nomes_qntSeguidores) - i - 1):
+                # Comparando o menor valor e colocando na frente (final da lista)
+                if nomes_qntSeguidores[j][1] < nomes_qntSeguidores[j + 1][1]:
+                    nomes_qntSeguidores[j], nomes_qntSeguidores[j + 1] = nomes_qntSeguidores[j + 1], nomes_qntSeguidores[j]
+                    # Se passou por aqui significa que ainda não está ordenado
+                    ordered = False
+            i += 1
+        return list(dict(nomes_qntSeguidores).keys())
 
     # 5- Encontrar o caminho entre uma pessoa e outra na rede
     def encontrar_caminho(self, usu_origem: str, usu_destino: str) -> str:
@@ -162,12 +158,10 @@ class GrafoInsta(object):
                             caminho_ordenado.insert(0, pred)
                             pred = predecessor[pred]
                         return '@' + ' -> @'.join(caminho_ordenado)
-                    if nos_adjacentes not in visitados and nos_adjacentes not \
-                            in fila:
+                    if nos_adjacentes not in visitados and nos_adjacentes not in fila:
                         predecessor[nos_adjacentes] = primeiro_elemento
                         fila.append(nos_adjacentes)
-            return f'\033[31mUsuario {usu_origem} não tem ligação com ' \
-                   f'{usu_destino}'
+            return f'\033[31mUsuario {usu_origem} não tem ligação com {usu_destino}'
 
 
 def obter_nickname(arquivo: str) -> list:
