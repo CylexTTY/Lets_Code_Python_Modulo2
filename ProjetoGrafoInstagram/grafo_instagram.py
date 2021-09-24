@@ -32,7 +32,7 @@ class GrafoInsta(object):
             self.rede_instagram[username_usuario][username_amigo] = tipo_amizade
 
     # 1- Exibir número de seguidores
-    def exibir_numero_seguidores(self, username_usuario: str, show=True) -> str:
+    def exibir_numero_seguidores(self, username_usuario: str, show=True) -> str | int:
         if self.usuario_existe(username_usuario):
             qnt_seguidores = 0
             for username, seguindo in self.rede_instagram.items():
