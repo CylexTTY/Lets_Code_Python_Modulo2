@@ -209,5 +209,5 @@ print(instagram.exibir_numero_seguidores('samuel45'))
 print(instagram.exibir_numero_seguindo('maria_helena6'))
 print(instagram.ordenar_stories('maria_helena6'))
 print(instagram.ordenar_top_influencers(15))
-# for pessoa in instagram.rede_instagram.keys():
-#     print(instagram.encontrar_caminho('maria_helena6', pessoa))
+for pessoa in instagram.rede_instagram.keys():
+    print(instagram.encontrar_caminho('maria_helena6', pessoa))
