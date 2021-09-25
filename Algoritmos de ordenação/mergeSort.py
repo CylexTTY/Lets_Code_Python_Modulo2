@@ -81,4 +81,3 @@ lista = [n for n in range(1, 1_000_001)]
 random.shuffle(lista)
 print('Shuffle list:', lista)
 print('Ordered list:', merge(lista))
-# print('Ordered list:', merge(lista))
