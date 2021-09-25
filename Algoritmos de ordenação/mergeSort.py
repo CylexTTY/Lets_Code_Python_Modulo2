@@ -30,15 +30,19 @@ import random
 #             ponteiro_esquerdo += 1
 #     return lista
 # More fast:
-def merge(lista, ini, fim):
+def merge(lista):
+    return _merge(lista, 0, len(lista))
+
+
+def _merge(lista, ini, fim):
     if fim - ini > 1:
         meio = (ini + fim) // 2
 
         # Esquerda
-        merge(lista, ini, meio)
+        _merge(lista, ini, meio)
 
         # Direita
-        merge(lista, meio, fim)
+        _merge(lista, meio, fim)
 
         # Ordenar
         sort(lista, ini, meio, fim)
@@ -76,5 +80,5 @@ def sort(lista, ini, meio, fim):
 lista = [n for n in range(1, 1_000_001)]
 random.shuffle(lista)
 print('Shuffle list:', lista)
-print('Ordered list:', merge(lista, ini=0, fim=len(lista)))
+print('Ordered list:', merge(lista))
 # print('Ordered list:', merge(lista))
