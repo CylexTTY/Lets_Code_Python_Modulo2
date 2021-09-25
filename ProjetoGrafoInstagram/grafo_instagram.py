@@ -38,13 +38,14 @@ class GrafoInsta(object):
             for username, seguindo in self.rede_instagram.items():
                 # Pular caso o nome da lista percorrida seja = nome do usuário
                 if username != username_usuario:
+                    # Percorrendo as pessoas que cada um segue
                     for nick in seguindo.keys():
-                        # Se achar o nome do usuário dentro das keys dos outros
-                        # usuários, então contabiliza 1 na lista de seguidores.
+                        # Se achar o nome do usuário dentro das keys dos outros usuários,
+                        # então contabiliza 1 na lista de seguidores.
                         if nick == username_usuario:
                             qnt_seguidores += 1
             if show:
-                return f'@{username_usuario} é seguido por {qnt_seguidores} pessoas.'
+                return f'@{username_usuario} é seguido(a) por {qnt_seguidores} seguidores.'
             return qnt_seguidores
 
     # 2- Exibir quantidades de pessoas que o usuário segue
@@ -52,9 +53,8 @@ class GrafoInsta(object):
         if self.usuario_existe(username_usuario):
             return f'@{username_usuario} segue {len(self.rede_instagram[username_usuario])} amigos.'
 
-    # 3- Ordenar a lista de Stories, ou seja, melhores amigos primeiro e depois
-    # conexões comuns ordenadas por ordem alfabética ->
-    # [melhores amigos em ordem alfabetica , amigos em ordem alfabetica]
+    # 3- Ordenar a lista de Stories, ou seja, melhores amigos primeiro e depois conexões comuns
+    # ordenadas por ordem alfabética -> [melhores amigos em ordem alfabetica , amigos em ordem alfabetica]
     def ordenar_stories(self, username_usuario: str) -> str:
         if self.usuario_existe(username_usuario):
             melhores_amigos = []
@@ -69,39 +69,35 @@ class GrafoInsta(object):
                    f'Amigos comuns: {"@" + " | @".join(self.ordenar_lista(amigos_comuns))}'
 
     def ordenar_lista(self, lista: list) -> list:
-        # Ordenado uma lista de strings de forma alfabética e crescente
-        def merge(lista: list) -> list:
-            if len(lista) > 1:
-                meio = len(lista) // 2
-                lista = sort(lista, merge(lista[:meio]), merge(lista[meio:]))
-            return lista
+        # Ordenado uma lista de strings de forma alfabética e crescente com merge sort
+        if len(lista) > 1:
+            meio = len(lista) // 2
+            lista = self.merge_sort(lista, self.ordenar_lista(lista[:meio]), self.ordenar_lista(lista[meio:]))
+        return lista
 
-        def sort(lista: list, lista_esquerda: list,
-                 lista_direita: list) -> list:
-            ponteiro_esquerdo = ponteiro_direito = 0
+    def merge_sort(self, lista: list, lista_esquerda: list, lista_direita: list) -> list:
+        ponteiro_esquerdo = ponteiro_direito = 0
 
-            for i in range(len(lista_esquerda) + len(lista_direita)):
-                # Se o ponteiro esquerdo estourar
-                if ponteiro_esquerdo >= len(lista_esquerda):
-                    lista[i] = lista_direita[ponteiro_direito]
-                    ponteiro_direito += 1
-                # Se o ponteiro direito estourar
-                elif ponteiro_direito >= len(lista_direita):
-                    lista[i] = lista_esquerda[ponteiro_esquerdo]
-                    ponteiro_esquerdo += 1
-                # Se o elemento do ponteiro esquerdo for maior ou igual ao do
-                # ponteiro direito
-                elif lista_esquerda[ponteiro_esquerdo] >= lista_direita[ponteiro_direito]:
-                    lista[i] = lista_direita[ponteiro_direito]
-                    ponteiro_direito += 1
-                # Se o elemento do ponteiro direito for maior ou igual ao do
-                # ponteiro esquerdo
-                else:
-                    lista[i] = lista_esquerda[ponteiro_esquerdo]
-                    ponteiro_esquerdo += 1
-            return lista
-
-        return merge(lista)
+        for i in range(len(lista_esquerda) + len(lista_direita)):
+            # Se o ponteiro esquerdo estourar
+            if ponteiro_esquerdo >= len(lista_esquerda):
+                lista[i] = lista_direita[ponteiro_direito]
+                ponteiro_direito += 1
+            # Se o ponteiro direito estourar
+            elif ponteiro_direito >= len(lista_direita):
+                lista[i] = lista_esquerda[ponteiro_esquerdo]
+                ponteiro_esquerdo += 1
+            # Se o elemento do ponteiro esquerdo for maior ou igual ao do
+            # ponteiro direito
+            elif lista_esquerda[ponteiro_esquerdo] >= lista_direita[ponteiro_direito]:
+                lista[i] = lista_direita[ponteiro_direito]
+                ponteiro_direito += 1
+            # Se o elemento do ponteiro direito for maior ou igual ao do
+            # ponteiro esquerdo
+            else:
+                lista[i] = lista_esquerda[ponteiro_esquerdo]
+                ponteiro_esquerdo += 1
+        return lista
 
     # 4- Encontrar top k influencers, ou seja, k pessoas que mais tem seguidores
     # da rede
@@ -112,8 +108,8 @@ class GrafoInsta(object):
             # Coletando o número de seguidores de cada usuário
             pessoas_seguidores = {pessoa: self.exibir_numero_seguidores(pessoa, show=False)
                                   for pessoa in self.rede_instagram.keys()}
-            # Fazendo um slice da lista ordenada decrescente dos top influencers
-            top_k_influencers = self.ordenar_dicionario_reverse(pessoas_seguidores)[:k]
+            # Obtendo uma lista ordenada decrescente dos top influencers
+            top_k_influencers = self.ordenar_dicionario_reverse(pessoas_seguidores, k)
             # Organizando visualmente os top influencers como string
             top_influencers = ''.join(f'\n{i+1}º ' + f'{"@" + user_name}'
                                       for i, user_name in enumerate(top_k_influencers))
@@ -122,22 +118,18 @@ class GrafoInsta(object):
         return f'\033[31mNúmero {k} inválido\n' \
                f'Necessário numero de 1 a {len(self.rede_instagram)}\033[m'
 
-    def ordenar_dicionario_reverse(self, dicionario: dict) -> list:
-        # Considerando que a lista será retornada na ordem decrescente sempre, usando o bubble sort
-        ordered = False
-        i = 0
+    def ordenar_dicionario_reverse(self, dicionario: dict, qnt_influencers) -> list:
+        # Considerando que a lista será retornada na ordem decrescente sempre.
+        # Usando o bubble sort com condicao de parada.
         nomes_qntSeguidores = list(tuple(dicionario.items()))
 
-        while not ordered:
-            ordered = True
+        for i in range(qnt_influencers):
             for j in range(len(nomes_qntSeguidores) - i - 1):
-                # Comparando o menor valor e colocando na frente (final da lista)
-                if nomes_qntSeguidores[j][1] < nomes_qntSeguidores[j + 1][1]:
+                # Comparando o maior valor e colocando na frente (final da lista)
+                if nomes_qntSeguidores[j][1] > nomes_qntSeguidores[j + 1][1]:
                     nomes_qntSeguidores[j], nomes_qntSeguidores[j + 1] = nomes_qntSeguidores[j + 1], nomes_qntSeguidores[j]
                     # Se passou por aqui significa que ainda não está ordenado
-                    ordered = False
-            i += 1
-        return list(dict(nomes_qntSeguidores).keys())
+        return list(dict(nomes_qntSeguidores[-qnt_influencers:][::-1]).keys())
 
     # 5- Encontrar o caminho entre uma pessoa e outra na rede
     def encontrar_caminho(self, usu_origem: str, usu_destino: str) -> str:
@@ -155,6 +147,7 @@ class GrafoInsta(object):
                         pred = primeiro_elemento
                         caminho_ordenado = [usu_destino]
                         while pred is not None:
+                            # Colocando já na ordem correta ao invés de 'appendar' e inverter.
                             caminho_ordenado.insert(0, pred)
                             pred = predecessor[pred]
                         return '@' + ' -> @'.join(caminho_ordenado)
@@ -198,6 +191,11 @@ def adicionar_conexoes(grafo: object, arquivo: str):
 
 instagram = adicionar_usuarios('usuarios.csv')
 adicionar_conexoes(instagram, 'conexoes.csv')
+print(instagram.exibir_numero_seguidores('helena42'))
+print(instagram.exibir_numero_seguindo('helena42'))
+print(instagram.ordenar_stories('helena42'))
+print(instagram.ordenar_top_influencers(5))
+print(instagram.encontrar_caminho('helena42', 'isadora45'))
 print(instagram.rede_instagram['maria_helena6'])
 print(instagram.exibir_numero_seguidores('samuel45'))
 print(instagram.exibir_numero_seguindo('maria_helena6'))
