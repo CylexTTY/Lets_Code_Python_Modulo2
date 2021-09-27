@@ -63,16 +63,18 @@ class GrafoInsta(object):
             return f'@{username_usuario} segue {len(self.rede_instagram[username_usuario])} amigos.'
 
     # 3- Ordenar a lista de Stories, ou seja, melhores amigos primeiro e depois conexões comuns
-    # ordenadas por ordem alfabética -> [melhores amigos em ordem alfabetica , amigos em ordem alfabetica]
+    # ordenadas por ordem alfabética -> [melhores amigos em ordem alfabética , amigos em ordem alfabética]
     def ordenar_stories(self, username_usuario: str) -> str:
         if self.usuario_existe(username_usuario):
+            tipos = {}
             melhores_amigos = deque()
             amigos_comuns = deque()
-            for amigo_tipo in self.rede_instagram[username_usuario].items():
-                if amigo_tipo[1] == str(2):
-                    melhores_amigos.append(amigo_tipo[0])
+            for amigo, tipo in self.rede_instagram[username_usuario].items():
+                tipos.setdefault(tipo, []).append(amigo)
+                if tipo == str(2):
+                    melhores_amigos.append(amigo)
                 else:
-                    amigos_comuns.append(amigo_tipo[0])
+                    amigos_comuns.append(amigo)
             return f'@{username_usuario} - Amizades:\n' \
                    f'Melhores amigos: {"@" + " | @".join(self.ordenar_lista(melhores_amigos))}\n' \
                    f'Amigos comuns: {"@" + " | @".join(self.ordenar_lista(amigos_comuns))}'
@@ -88,21 +90,19 @@ class GrafoInsta(object):
         ponteiro_esquerdo = ponteiro_direito = 0
 
         for i in range(len(lista_esquerda) + len(lista_direita)):
-            # Se o ponteiro esquerdo estourar
-            if ponteiro_esquerdo >= len(lista_esquerda):
+            # Se o ponteiro esquerdo estourar OU
+            # o ponteiro direito nao estourar E o elemento do ponteiro esquerdo >= elemento do ponteiro direito.
+            # Lista recebe elemento direito e ponteiro direito avanca.
+            if (
+                ponteiro_esquerdo >= len(lista_esquerda)
+                or (ponteiro_direito < len(lista_direita)
+                    and lista_esquerda[ponteiro_esquerdo] >= lista_direita[ponteiro_direito])
+            ):
                 lista[i] = lista_direita[ponteiro_direito]
                 ponteiro_direito += 1
-            # Se o ponteiro direito estourar
-            elif ponteiro_direito >= len(lista_direita):
-                lista[i] = lista_esquerda[ponteiro_esquerdo]
-                ponteiro_esquerdo += 1
-            # Se o elemento do ponteiro esquerdo for maior ou igual ao do
-            # ponteiro direito
-            elif lista_esquerda[ponteiro_esquerdo] >= lista_direita[ponteiro_direito]:
-                lista[i] = lista_direita[ponteiro_direito]
-                ponteiro_direito += 1
-            # Se o elemento do ponteiro direito for maior ou igual ao do
-            # ponteiro esquerdo
+            # Caso contrário, podemos considerar que o ponteiro direito estourou ou
+            # elemento do ponteiro direito >= elemento do ponteiro esquerdo;
+            # Portanto lista recebe elemento do ponteiro esquerdo e ponteiro esquerdo avança.
             else:
                 lista[i] = lista_esquerda[ponteiro_esquerdo]
                 ponteiro_esquerdo += 1
@@ -137,7 +137,6 @@ class GrafoInsta(object):
                 # Comparando o maior valor e colocando na frente (final da lista)
                 if nomes_qntSeguidores[j][1] > nomes_qntSeguidores[j + 1][1]:
                     nomes_qntSeguidores[j], nomes_qntSeguidores[j + 1] = nomes_qntSeguidores[j + 1], nomes_qntSeguidores[j]
-                    # Se passou por aqui significa que ainda não está ordenado
         return list(dict(nomes_qntSeguidores[-qnt_influencers:][::-1]).keys())
 
     # 5- Encontrar o caminho entre uma pessoa e outra na rede
@@ -206,11 +205,10 @@ print(instagram.exibir_numero_seguindo('helena42'))
 print(instagram.ordenar_stories('helena42'))
 print(instagram.ordenar_top_influencers(6))
 print(instagram.encontrar_caminho('helena42', 'isadora45'))
-# print(instagram.rede_instagram['maria_helena6'])
-# print(instagram.exibir_numero_seguidores('samuel45'))
-# print(instagram.exibir_numero_seguindo('maria_helena6'))
-# print(instagram.ordenar_stories('maria_helena6'))
-# print(instagram.ordenar_top_influencers(15))
-# for pessoa in instagram.rede_instagram.keys():
-#     print(instagram.encontrar_caminho('maria_helena6', pessoa))
-
+print(instagram.rede_instagram['maria_helena6'])
+print(instagram.exibir_numero_seguidores('samuel45'))
+print(instagram.exibir_numero_seguindo('maria_helena6'))
+print(instagram.ordenar_stories('maria_helena6'))
+print(instagram.ordenar_top_influencers(15))
+for pessoa in instagram.rede_instagram.keys():
+    print(instagram.encontrar_caminho('maria_helena6', pessoa))
