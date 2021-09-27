@@ -33,7 +33,7 @@ class GrafoInsta(object):
         return existe
 
     # 1- Exibir número de seguidores
-    def exibir_numero_seguidores(self, username_usuario: str, show=True) -> str | int:
+    def exibir_numero_seguidores(self, username_usuario: str) -> str | int:
         if self.usuario_existe(username_usuario):
             # qnt_seguidores = 0
             # for username, seguindo in self.rede_instagram.items():
@@ -46,9 +46,7 @@ class GrafoInsta(object):
             #             if nick == username_usuario:
             #                 qnt_seguidores += 1
             qnt_seguidores = self.contar_seguidores()[username_usuario]
-            if show:
-                return f'@{username_usuario} é seguido(a) por {qnt_seguidores} seguidores.'
-            return qnt_seguidores
+            return f'@{username_usuario} é seguido(a) por {qnt_seguidores} seguidores.'
 
     def contar_seguidores(self):
         contador = defaultdict(int)
