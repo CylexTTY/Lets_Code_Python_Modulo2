@@ -128,17 +128,19 @@ class GrafoInsta(object):
         return f'\033[31mNúmero {k} inválido\n' \
                f'Necessário numero de 1 a {len(self.rede_instagram)}\033[m'
 
-    def ordenar_dicionario_reverse(self, dicionario: dict, qnt_influencers) -> list:
+    def ordenar_dicionario_reverse(self, dicionario: dict, qnt_influencers: int) -> deque:
         # Considerando que a lista será retornada na ordem decrescente sempre.
         # Usando o bubble sort com condição de parada.
-        nomes_qntSeguidores = list(tuple(dicionario.items()))
+        nomes_qntSeguidores = deque(dicionario.items())
 
         for i in range(qnt_influencers):
-            for j in range(len(nomes_qntSeguidores) - i - 1):
-                # Comparando o maior valor e colocando na frente (final da lista)
-                if nomes_qntSeguidores[j][1] > nomes_qntSeguidores[j + 1][1]:
-                    nomes_qntSeguidores[j], nomes_qntSeguidores[j + 1] = nomes_qntSeguidores[j + 1], nomes_qntSeguidores[j]
-        return list(dict(nomes_qntSeguidores[-qnt_influencers:][::-1]).keys())
+            for j in range(len(nomes_qntSeguidores)-1, 0+i, -1):
+                # Comparando o maior valor e colocando no começo da lista
+                if nomes_qntSeguidores[j][1] > nomes_qntSeguidores[j - 1][1]:
+                    nomes_qntSeguidores[j], nomes_qntSeguidores[j - 1] = nomes_qntSeguidores[j - 1], nomes_qntSeguidores[j]
+        # Fazendo um slice em um deque, obtendo os primeiros "k" influencers.
+        top_influencers = islice(nomes_qntSeguidores, 0, qnt_influencers)
+        return deque(nome for nome, qnt_seguidores in top_influencers)
 
     # 5- Encontrar o caminho entre uma pessoa e outra na rede
     def encontrar_caminho(self, usu_origem: str, usu_destino: str) -> str:
