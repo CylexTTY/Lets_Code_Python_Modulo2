@@ -81,9 +81,12 @@ class GrafoInsta(object):
 
     def ordenar_lista(self, lista: deque) -> deque:
         # Ordenado uma lista de strings de forma alfabética e crescente com merge sort
-        if len(lista) > 1:
-            meio = len(lista) // 2
-            self.merge_sort(lista, self.ordenar_lista(deque(islice(lista, 0, meio))), self.ordenar_lista(deque(islice(lista, meio, len(lista)))))
+        tamanho_lista = len(lista)
+        if tamanho_lista > 1:
+            meio = tamanho_lista // 2
+            esquerda = deque(islice(lista, 0, meio))
+            direita = deque(islice(lista, meio, tamanho_lista))
+            self.merge_sort(lista, self.ordenar_lista(esquerda), self.ordenar_lista(direita))
         return lista
 
     def merge_sort(self, lista: deque, lista_esquerda: deque, lista_direita: deque) -> deque:
@@ -205,10 +208,10 @@ print(instagram.exibir_numero_seguindo('helena42'))
 print(instagram.ordenar_stories('helena42'))
 print(instagram.ordenar_top_influencers(6))
 print(instagram.encontrar_caminho('helena42', 'isadora45'))
-print(instagram.rede_instagram['maria_helena6'])
-print(instagram.exibir_numero_seguidores('samuel45'))
-print(instagram.exibir_numero_seguindo('maria_helena6'))
-print(instagram.ordenar_stories('maria_helena6'))
-print(instagram.ordenar_top_influencers(15))
-for pessoa in instagram.rede_instagram.keys():
-    print(instagram.encontrar_caminho('maria_helena6', pessoa))
+# print(instagram.rede_instagram['maria_helena6'])
+# print(instagram.exibir_numero_seguidores('samuel45'))
+# print(instagram.exibir_numero_seguindo('maria_helena6'))
+# print(instagram.ordenar_stories('maria_helena6'))
+# print(instagram.ordenar_top_influencers(15))
+# for pessoa in instagram.rede_instagram.keys():
+#     print(instagram.encontrar_caminho('maria_helena6', pessoa))
